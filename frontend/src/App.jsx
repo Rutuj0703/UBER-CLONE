@@ -14,7 +14,7 @@ import CaptainProtectWrapper from './pages/CaptainProtectWrapper'
 import Riding from './pages/Riding'
 import CaptainRiding from './pages/CaptainRiding'
 import Pickup from './pages/Pickup'
-import OTP from './components/OTP'
+// import OTP from './components/OTP'
 import FinishRide from './components/FinishRide'
 
 const App = () => {
@@ -26,7 +26,7 @@ const App = () => {
         <Route path='/riding' element={<Riding />} />
         <Route path='/captain-riding' element={<CaptainRiding />} />
         <Route path='/picking-up' element={<Pickup />} />
-        <Route path='/otp' element={<OTP />} />
+        {/* <Route path='/otp' element={<OTP />} /> */}
         <Route path='/finish-ride' element={<FinishRide />} />
         <Route path='/signup' element={<UserSignUp />} />
         <Route path='/captain-login' element={<CaptainLogin />} />

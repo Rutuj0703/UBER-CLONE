@@ -26,7 +26,6 @@ function initializeSocket(server) {
             }
         });
 
-
         socket.on('update-location-captain', async (data) => {
             const { userId, location } = data;
 

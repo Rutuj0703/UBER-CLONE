@@ -12,6 +12,7 @@ import { useContext } from 'react';
 import { UserDataContext } from '../context/userContext';
 import { useNavigate } from 'react-router-dom';
 import { SocketContext } from '../context/socketContext'
+import LiveTracking from '../components/LiveTracking'
 
 const Home = () => {
   const [ pickup,setPickup] = useState('')
@@ -23,6 +24,7 @@ const Home = () => {
   const panelCloseRef = useRef(null)
   const vehicleFoundRef = useRef(null)
   const waitingForDriverRef = useRef(null)
+ 
 
   const [ vehiclePanel,setVehiclePanel] = useState(false)
   const [ confirmRidePanel,setConfirmRidePanel] = useState(false)
@@ -34,6 +36,7 @@ const Home = () => {
     const [ fare, setFare ] = useState({})
     const [ vehicleType, setVehicleType ] = useState(null)
     const [ ride, setRide ] = useState(null)
+
     const navigate = useNavigate()
     const { socket }=useContext(SocketContext)
     const { user } = useContext(UserDataContext)
@@ -41,7 +44,17 @@ const Home = () => {
   useEffect(()=>{
     socket.emit("join", { userType: "user", userId: user._id })
   }, [ user ])
-    
+  socket.on('ride-confirmed',ride=>{
+      setVehicleFound(false)
+      setWaitingForDriver(true)
+      setRide(ride)
+  })  
+  socket.on('ride-started', ride => {
+    console.log("ride")
+    setWaitingForDriver(false)
+    navigate('/riding', { state: { ride } }) // Updated navigate to include ride data
+})
+
   const handlePickupChange = async (e) => {
     setPickup(e.target.value)
     try {
@@ -181,7 +194,7 @@ async function createRide() {
 
   return (
     <div className='h-screen relative overflow-hidden'>
-      <img className='w-16 absolute left-7 top-7' src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/58/Uber_logo_2018.svg/2560px-Uber_logo_2018.svg.png" alt="" />
+      <LiveTracking />
       <div className='h-screen w-screen'>
         {/* image for temporary use */}
         <img className='h-full w-full object-cover' src="https://miro.medium.com/v2/resize:fit:1400/0*gwMx05pqII5hbfmX.gif" alt="" />
@@ -252,6 +265,7 @@ async function createRide() {
         destination={destination}
         fare={fare}
         vehicleType={vehicleType}
+        
         setConfirmRidePanel={setConfirmRidePanel}
          setVehicleFound={setVehicleFound}/>
       </div>
@@ -264,8 +278,13 @@ async function createRide() {
         setVehicleFound={setVehicleFound}/>
       </div>
       <div ref={waitingForDriverRef} className='fixed w-full z-10 bg-white bottom-0 translate-y-full px-3 py-6 pt-12'>
-        <WaitingForDriver setWaitingForDriver={setWaitingForDriver}/>
+        <WaitingForDriver 
+        ride={ride}
+        setVehicleFound={setVehicleFound}
+        waitingForDriver={waitingForDriver}
+        setWaitingForDriver={setWaitingForDriver}/>
       </div>
+      
     </div>
   )
 }
