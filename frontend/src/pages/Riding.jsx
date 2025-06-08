@@ -1,4 +1,5 @@
 import React from 'react'
+import axios from 'axios'
 import { Link, useLocation } from 'react-router-dom' // Added useLocation
 import { useEffect, useContext } from 'react'
 import { SocketContext } from '../context/socketContext'
@@ -10,6 +11,10 @@ const Riding = (props) => {
     const { ride } = location.state || {} // Retrieve ride data
     const { socket } = useContext(SocketContext)
     const navigate = useNavigate()
+
+    async function endRide() {
+        navigate('/home')
+    }
 
     socket.on("ride-ended", () => {
         navigate('/home')
@@ -52,7 +57,7 @@ const Riding = (props) => {
           </div>
         </div>
       </div>
-        <button className='w-full bg-green-600 text-white font-semibold p-2 rounded-lg mt-5'>Make a Payment</button>
+        <button onClick={endRide} className='w-full bg-green-600 text-white font-semibold p-2 rounded-lg mt-5'>Make a Payment</button>
       </div>
     </div>
   )
